@@ -7,11 +7,18 @@ export default new Vuex.Store({
   state: {
     sid: '',
     isLogin: false,
-    token: ''
+    token: '',
+    userInfo: {}
   },
   mutations: {
     setSid (state, value) {
       state.sid = value
+    },
+    setUserInfo (state, value) {
+      state.userInfo = value
+    },
+    setIsLogin (state, value) {
+      state.isLogin = value
     }
   },
   actions: {
