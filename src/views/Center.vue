@@ -6,7 +6,7 @@
         v-for="(item, index) in lists"
         :key="'center' + index"
       >
-        <router-link :to="{name: item.link}" href="javascript:;">
+        <router-link :to="{ name: item.link }" href="javascript:;" :active-class="item.activeClass">
           <i class="layui-icon" :class="item.icon"></i>
           {{ item.name }}
         </router-link>
@@ -28,11 +28,13 @@ export default {
       }, {
         name: '基本设置',
         icon: 'layui-icon-set',
-        link: 'set'
+        link: 'myinfo',
+        activeClass: 'layui-this'
       }, {
         name: '我的帖子',
         icon: 'layui-icon-form',
-        link: 'posts'
+        link: 'mypost',
+        activeClass: 'layui-this'
       }, {
         name: '我的消息',
         icon: 'layui-icon-reply-fill',

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Home from './views/Home.vue'
+import store from './store'
 
 const Login = () => import(/* webpackChunkName: 'login' */ './views/Login.vue')
 const Reg = () => import(/* webpackChunkName: 'reg' */ './views/Reg.vue')
@@ -16,9 +17,16 @@ const Msg = () => import(/* webpackChunkName: 'user-post' */ './components/user/
 const Others = () => import(/* webpackChunkName: 'others' */ './components/user/Others.vue')
 const User = () => import(/* webpackChunkName: 'others' */ './views/User.vue')
 
+const MyInfo = () => import(/* webpackChunkName: 'myinfo' */ './components/user/common/MyInfo.vue')
+const PicUpload = () => import(/* webpackChunkName: 'picupload' */ './components/user/common/PicUpload.vue')
+const Password = () => import(/* webpackChunkName: 'password' */ './components/user/common/Password.vue')
+const Accounts = () => import(/* webpackChunkName: 'accounts' */ './components/user/common/Accounts.vue')
+const MyPost = () => import(/* webpackChunkName: 'mypost' */ './components/user/common/MyPost.vue')
+const MyCollection = () => import(/* webpackChunkName: 'mycollection' */ './components/user/common/MyCollection.vue')
+
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   linkExactActiveClass: 'layui-this',
   routes: [
     {
@@ -68,6 +76,7 @@ export default new Router({
     {
       path: '/center',
       component: Center,
+      meta: { requireAuth: true },
       linkActiveClass: 'layui-this',
       children: [
         {
@@ -78,12 +87,46 @@ export default new Router({
         {
           path: 'set',
           name: 'set',
-          component: Settings
+          component: Settings,
+          children: [
+            {
+              path: '',
+              name: 'myinfo',
+              component: MyInfo
+            },
+            {
+              path: 'picupload',
+              name: 'picupload',
+              component: PicUpload
+            },
+            {
+              path: 'password',
+              name: 'password',
+              component: Password
+            },
+            {
+              path: 'accounts',
+              name: 'accounts',
+              component: Accounts
+            }
+          ]
         },
         {
           path: 'posts',
           name: 'posts',
-          component: Posts
+          component: Posts,
+          children: [
+            {
+              path: '',
+              name: 'mypost',
+              component: MyPost
+            },
+            {
+              path: 'mycollection',
+              name: 'mycollection',
+              component: MyCollection
+            }
+          ]
         },
         {
           path: 'msg',
@@ -99,3 +142,25 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token')
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+  if (token !== '' && token !== null) {
+    store.commit('setToken', token)
+    store.commit('setUserInfo', userInfo)
+    store.commit('isLogin', true)
+  }
+  if (to.matched.some(record => record.meta.requireAuth)) {
+    const isLogin = store.state.isLogin
+
+    if (isLogin) {
+      next()
+    } else {
+      next('/login')
+    }
+  } else {
+    next()
+  }
+})
+export default router

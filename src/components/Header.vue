@@ -77,7 +77,9 @@
                 >
               </dd>
               <hr style="margin: 5px 0" />
-              <dd><a href="/user/logout/" style="text-align: center">退出</a></dd>
+              <dd>
+                <a href="javascript: void(0)" style="text-align: center" @click="logout()">退出</a>
+              </dd>
             </dl>
           </li>
         </template>
@@ -109,6 +111,15 @@ export default {
       this.hoverCtrl = setTimeout(() => {
         this.isHover = false
       }, 500)
+    },
+    logout () {
+      this.$confirm('确定退出么', () => {
+        localStorage.clear()
+        this.$store.commit()
+        this.$store.commit('setUserInfo', '')
+        this.$store.commit('setIsLogin', false)
+        this.$store.commit('setToken', '')
+      }, () => {})
     }
   },
   computed: {
